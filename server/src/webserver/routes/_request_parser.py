@@ -69,7 +69,7 @@ class RequestParser(object):
                     if 'format' in value:
                         frmt = value['format']
                     try:
-                        data[key] = datetime.strptime(data[key], frmt)
+                        data[key] = datetime.strptime(data[key].strip(), frmt)
                     except Exception as e:
                         errors.append(f'{key} {e}')
                         break

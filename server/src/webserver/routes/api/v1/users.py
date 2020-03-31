@@ -29,14 +29,13 @@ class UsersRoute(Resource):
         """Post method."""
 
         parser = RequestParser()
-        parser.add_argument('username', type=str, required=True,
-                            help='missing [username]')
         parser.add_argument('name', type=str, required=True,
                             help='missing [name]')
         parser.add_argument('email', type=str, required=True,
                             help='missing [email]')
         parser.add_argument('password', type=str, required=True,
                             help='missing [password]')
+        parser.add_argument('username', type=str)
         parser.add_argument('allow_streaming', type=bool, default=True)
         kwargs = parser.parse_args()
         uc = UserController()

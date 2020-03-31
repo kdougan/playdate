@@ -1,4 +1,4 @@
-"""Apple Pay Controller."""
+"""User Controller."""
 
 import json
 
@@ -7,10 +7,9 @@ from flask import current_app
 
 from ..models import User
 from . import hash_password
-from . import verify_password
 
 
-class UserController(object):
+class UserController:
     """UserController Class."""
 
     def __init__(self):
@@ -22,22 +21,33 @@ class UserController(object):
         if username:
             return json.loads(User.objects(username=username).first_or_404().to_json())
         users = User.objects(active__ne=False, hidden__ne=True)
-        return [json.loads(user.to_json()) for user in users]
+        return list(map(lambda u: json.loads(u.to_json()), users))
 
     def create(self, name, password, email, username=None, allow_streaming=True):
-        email = email.lower().replace('.', '')
-        user = User.objects(email=email).first()
+        email = email.lower().replace('.', '').strip()
+        if not username:
+            username = email.split('@')[0]
+        username = username.strip()
+        _username = username.lower()
+        user = User.email_or_username(email, username).first()
         if user:
-            abort(500, f'user with email {email} already exists')
+            parts = []
+            if user.email == email:
+                parts.append(f'email {email}')
+            if user._username == _username:
+                parts.append(f'username {username}')
+            abort(409, f'user with {" and ".join(parts)} already exists')
         hashed_password = hash_password(password)
         if not username:
             username = email.split('@')[0]
         user = User(
-            name=name,
+            name=name.strip(),
             password=hashed_password,
             email=email,
             username=username,
-            publicFields=['username'])
+            _username=_username,
+            public_fields=['username']
+        )
         user.save()
         return json.loads(user.to_json())
 

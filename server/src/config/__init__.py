@@ -161,6 +161,10 @@ class BaseConfig(object):
             'host': f'mongodb+srv://{username}:{password}@{host}/{db}?retryWrites=true&w=majority'
         }
 
+    @classproperty
+    def JWT_SECRET_KEY(self):
+        return os.getenv('JWT_SECRET_KEY')
+
 
 class DevConfig(BaseConfig):
     """Development configuration options."""

@@ -4,7 +4,7 @@ url = "https://pypi.org/simple"
 verify_ssl = true
 
 [scripts]
-serv = "python serve.py"
+serve = "python serve.py"
 
 [dev-packages]
 autopep8 = "*"
@@ -20,6 +20,9 @@ flask-redis = "*"
 flask-restful = "*"
 flask-mongoengine = "*"
 dnspython = "*"
+flask-cors = "*"
+flask-jwt-extended = "*"
+passlib = "*"
 
 [requires]
 python_version = "3.7"

@@ -1,6 +1,7 @@
 """Routes Initializer."""
 
 from flask_restful import Api
+from flask_restful.utils import cors
 from flask import Blueprint
 
 from . import client
@@ -23,6 +24,7 @@ class Router(object):
 
         prefix = app.config['API_URL_PREFIX']
         api = Api(self.api_blueprint, prefix=prefix)
+        api.decorators = [cors.crossdomain(origin='*')]
         self._init_api_resources(api)
 
         app.register_blueprint(self.api_blueprint)
