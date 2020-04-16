@@ -50,6 +50,7 @@ class RequestParser(object):
                 data.update(request.get_json())
             data.update(request.args.to_dict())
             data.update(request.form.to_dict())
+            data.update(request.files.to_dict())
 
         for key, value in self.args.items():
 

@@ -5,9 +5,9 @@ import re
 import time
 
 import dotenv
-import redis
 
-os.environ["NLS_LANG"] = ".UTF8"
+
+os.environ['NLS_LANG'] = '.UTF8'
 os.environ['TZ'] = 'US/Pacific'
 time.tzset()
 
@@ -55,7 +55,9 @@ class classproperty(property):
 class BaseConfig(object):
     """Default configuration options."""
 
-    _session_redis = None
+    @classproperty
+    def ENV(self):
+        return os.getenv('ENV')
 
     @classproperty
     def APP_NAME(self):
@@ -64,6 +66,10 @@ class BaseConfig(object):
     @classproperty
     def SITE_NAME(self):
         return self.APP_NAME
+
+    @classproperty
+    def TESTING(self):
+        return tobool(os.getenv('TESTING', False))
 
     @classproperty
     def APP_ID(self):
@@ -88,25 +94,8 @@ class BaseConfig(object):
     #     return int(os.getenv('MAIL_PORT'))
 
     @classproperty
-    def REDIS_HOST(self):
-        return os.getenv('REDIS_HOST')
-
-    @classproperty
-    def REDIS_PORT(self):
-        return int(os.getenv('REDIS_PORT'))
-
-    @classproperty
-    def REDIS_URL(self):
-        redis_url = f'redis://{self.REDIS_HOST}:{self.REDIS_PORT}'
-        return os.getenv('REDIS_URL', redis_url)
-
-    @classproperty
     def CACHE_TYPE(self):
         return os.getenv('CACHE_TYPE')
-
-    @classproperty
-    def CACHE_REDIS_URL(self):
-        return os.getenv('CACHE_REDIS_URL', self.REDIS_URL)
 
     @classproperty
     def CACHE_DEFAULT_TIMEOUT(self):
@@ -117,18 +106,8 @@ class BaseConfig(object):
         return os.getenv('API_URL_PREFIX')
 
     @classproperty
-    def SESSION_TYPE(self):
-        return 'redis'
-
-    @classproperty
     def SESSION_KEY_PREFIX(self):
         return os.getenv('SESSION_KEY_PREFIX')
-
-    @classproperty
-    def SESSION_REDIS(self):
-        if not self._session_redis:
-            self._session_redis = redis.StrictRedis.from_url(self.REDIS_URL)
-        return self._session_redis
 
     @classproperty
     def PERMANENT_SESSION_LIFETIME(self):
@@ -164,6 +143,74 @@ class BaseConfig(object):
     @classproperty
     def JWT_SECRET_KEY(self):
         return os.getenv('JWT_SECRET_KEY')
+
+    @classproperty
+    def CACHE_TYPE(self):
+        return os.getenv('CACHE_TYPE')
+
+    @classproperty
+    def MYSQL_HOST(self):
+        return os.getenv('MYSQL_HOST')
+
+    @classproperty
+    def MYSQL_PORT(self):
+        return int(os.getenv('MYSQL_PORT'))
+
+    @classproperty
+    def MYSQL_USER(self):
+        return os.getenv('MYSQL_USER')
+
+    @classproperty
+    def MYSQL_PASS(self):
+        return os.getenv('MYSQL_PASS')
+
+    @classproperty
+    def MYSQL_DATABASE(self):
+        if self.TESTING:
+            return os.getenv('TESTING_MYSQL_DATABASE')
+        return os.getenv('MYSQL_DATABASE')
+
+    @classproperty
+    def SQLALCHEMY_DATABASE_URI(self):
+        return (f'mysql+pymysql://{self.MYSQL_USER}:{self.MYSQL_PASS}@'
+                f'{self.MYSQL_HOST}:{self.MYSQL_PORT}/{self.MYSQL_DATABASE}')
+
+    @classproperty
+    def SQLALCHEMY_TRACK_MODIFICATIONS(self):
+        return tobool(
+            os.getenv('SQLALCHEMY_TRACK_MODIFICATIONS'))
+
+    @classproperty
+    def SQLALCHEMY_ECHO(self):
+        return tobool(os.getenv('SQLALCHEMY_ECHO'))
+
+    @classproperty
+    def GOOGLE_CLOUD_STORAGE_ACCESS_KEY(self):
+        return os.getenv('GOOGLE_CLOUD_STORAGE_ACCESS_KEY')
+
+    @classproperty
+    def GOOGLE_CLOUD_STORAGE_SECRET_KEY(self):
+        return os.getenv('GOOGLE_CLOUD_STORAGE_SECRET_KEY')
+
+    @classproperty
+    def GOOGLE_CLOUD_STORAGE_BUCKET(self):
+        return os.getenv('GOOGLE_CLOUD_STORAGE_BUCKET')
+
+    @classproperty
+    def STORAGE_PROVIDER(self):
+        return os.getenv('STORAGE_PROVIDER')
+
+    @classproperty
+    def STORAGE_KEY(self):
+        return self.GOOGLE_CLOUD_STORAGE_ACCESS_KEY
+
+    @classproperty
+    def STORAGE_SECRET(self):
+        return self.GOOGLE_CLOUD_STORAGE_SECRET_KEY
+
+    @classproperty
+    def STORAGE_CONTAINER(self):
+        return self.GOOGLE_CLOUD_STORAGE_BUCKET
 
 
 class DevConfig(BaseConfig):

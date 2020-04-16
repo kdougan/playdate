@@ -1,22 +1,18 @@
-"""Apple Pay Routes."""
+"""Auth Routes."""
 
 import json
 
-from flask import Response
-from flask import abort
-from flask import session
 from flask_restful import Resource
 from flask_jwt_extended import jwt_required
 from flask_jwt_extended import jwt_refresh_token_required
-from flask_jwt_extended import verify_jwt_in_request
 
-from src.webserver.controllers.auth import AuthController
+from src.webserver.controllers import AuthController
 from src.webserver.routes._request_parser import RequestParser
 
 
 def register(api):
     """Resource registration."""
-    api.add_resource(AuthRoute, '/v1/auth/login')
+    api.add_resource(AuthRoute, '/v1/auth')
     api.add_resource(AuthRefreshRoute, '/v1/auth/refresh')
     api.add_resource(AuthVerifyRoute, '/v1/auth/verify')
 
@@ -27,8 +23,8 @@ class AuthRoute(Resource):
     def post(self):
         """Post method."""
         parser = RequestParser()
-        parser.add_argument('username', type=str, required=True,
-                            help='missing [username]')
+        parser.add_argument('email', type=str, required=True,
+                            help='missing [email]')
         parser.add_argument('password', type=str, required=True,
                             help='missing [password]')
         kwargs = parser.parse_args()

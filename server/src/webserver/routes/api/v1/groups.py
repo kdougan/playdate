@@ -1,3 +1,5 @@
+"""Group Routes."""
+
 import json
 
 from flask import Response
@@ -5,7 +7,7 @@ from flask import abort
 from flask import session
 from flask_restful import Resource
 
-from src.webserver.controllers.group import GroupController
+from src.webserver.controllers import GroupController
 from src.webserver.routes._request_parser import RequestParser
 
 

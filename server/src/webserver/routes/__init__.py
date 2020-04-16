@@ -1,11 +1,13 @@
 """Routes Initializer."""
 
+from flask import Blueprint
+from flask_graphql import GraphQLView
 from flask_restful import Api
 from flask_restful.utils import cors
-from flask import Blueprint
 
 from . import client
 from .api import v1
+# from ..graphql import schema
 
 
 class Router(object):
@@ -28,6 +30,15 @@ class Router(object):
         self._init_api_resources(api)
 
         app.register_blueprint(self.api_blueprint)
+
+        # app.add_url_rule(
+        #     '/graphql',
+        #     view_func=GraphQLView.as_view(
+        #         'graphql',
+        #         schema=schema,
+        #         graphiql=True  # for having the GraphiQL interface
+        #     )
+        # )
 
     def _init_client_resources(self, app):
         client.register(app)

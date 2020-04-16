@@ -1,5 +1,4 @@
 """Extensions."""
+from flask_caching import Cache
 
-from flask_redis import FlaskRedis
-
-redis_store = FlaskRedis(decode_responses=True)
+cache = Cache()

@@ -3,12 +3,7 @@
 import json
 import time
 
-from flask import abort
-from flask import current_app
-
-from ..models import Group
-from . import hash_password
-from . import verify_password
+from ..models.group import Group
 
 
 class GroupController:
@@ -20,16 +15,16 @@ class GroupController:
 
     def get(self, group_id):
         """Return Group information by id."""
-        return json.loads(Group.objects(id=group_id).first_or_404().to_json())
+        return Group.get_or_404(group_id)
 
-    def create(self, event_id, host, slotCount, name=None):
+    def create(self, event_id, name=None, slot_count=1, open=True, meta={}):
         if not name:
             name = f'Group#{int(round(time.time() * 1000))}'
-        group = Group(
+        group = Group.create(
             event_id=event_id,
-            host=host,
-            slotCount=slotCount,
-            name=name
+            name=name,
+            slot_count=slot_count,
+            open=open,
+            meta=meta
         )
-        group.save()
-        return json.loads(group.to_json())
+        return group, 201
